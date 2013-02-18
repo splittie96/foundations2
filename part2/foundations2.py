@@ -52,4 +52,4 @@ for current in x:
     else:
         print current,
         counter = counter+1
-    print
+    print ';'
