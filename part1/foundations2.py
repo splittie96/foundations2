@@ -1,43 +1,20 @@
 # coding: utf-8
-
-def output_set(s):
-    counter = 0
-    for x in s:
-        if isinstance(x,frozenset):
-            print '{',
-            if counter != 0:
-                print',',
-            output_set(x)
-            print'}',
-            counter = counter+1
-        elif isinstance(x,tuple):
-            if counter != 0:
-                print',',
-            print'(',
-            output_tuple(x)
-            print')',
-            counter = counter+1
-        else:
-            if counter != 0:
-                print',',
-            print(x),
-            counter = counter+1
     
-def output_tuple(t):
+def output(t):
     counter = 0
     for x in t:
         if isinstance(x,frozenset):
-            print '{',
             if counter != 0:
                 print',',
-            output_set(x)
+            print '{',
+            output(x)
             print'}',
             counter = counter+1
         elif isinstance(x,tuple):
             if counter != 0:
                 print',',
             print'(',
-            output_tuple(x)
+            output(x)
             print')',
             counter = counter+1
         else:
@@ -62,14 +39,14 @@ for current in x:
         print '{',
         if counter != 0:
             print',',
-        output_set(current)
+        output(current)
         print '}',
         counter = counter+1
     elif isinstance(current,tuple):
         print '(',
         if counter != 0:
             print',',
-        output_tuple(current)
+        output(current)
         print ')',
         counter = counter+1
     else:
