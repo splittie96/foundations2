@@ -1,4 +1,6 @@
 # coding: utf-8
+import json 
+from pprint import pprint
     
 def output(t):
     counter = 0
@@ -36,7 +38,7 @@ x.append(x[4].intersection(frozenset([x[1]])))
 for current in x:
     counter = 0
     if isinstance(current,frozenset):
-        print '{',
+        pprint ('{')
         if counter != 0:
             print',',
         output(current)
@@ -52,4 +54,10 @@ for current in x:
     else:
         print current,
         counter = counter+1
-    print
+    print ';'
+
+json_data=open('input.json')
+
+data = json.load(json_data)
+pprint(data)
+json_data.close()
