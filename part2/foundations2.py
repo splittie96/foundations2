@@ -52,4 +52,8 @@ for current in x:
     else:
         print current,
         counter = counter+1
+<<<<<<< HEAD
     print
+=======
+    print
+>>>>>>> afae181d4a32f0a2aaaa4db2558513587f02a3d2
