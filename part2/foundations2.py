@@ -25,7 +25,7 @@ def output(t):
             print(x),
             counter = counter+1
     
-
+f = open('output.txt', 'w')
 x = []
 x.append(8)
 x.append(frozenset([1,2,3,4,5,6,7,x[0]]))
@@ -38,7 +38,7 @@ x.append(x[4].intersection(frozenset([x[1]])))
 for current in x:
     counter = 0
     if isinstance(current,frozenset):
-        pprint ('{')
+        print ('{'),
         if counter != 0:
             print',',
         output(current)
@@ -56,8 +56,29 @@ for current in x:
         counter = counter+1
     print ';'
 
-json_data=open('input.json')
+"""json_data=open('input.json')
 
 data = json.load(json_data)
 pprint(data)
-json_data.close()
+json_data.close()"""
+
+for current in x:
+    counter = 0
+    if isinstance(current,frozenset):
+        f.write ('{'),
+        if counter != 0:
+            f.write(','),
+        output(current)
+        f.write ('}'),
+        counter = counter+1
+    elif isinstance(current,tuple):
+        f.write ('('),
+        if counter != 0:
+           f.write (','),
+        output(current)
+        f.write (')'),
+        counter = counter+1
+    else:
+        f.write(str(current)),
+        counter = counter+1
+    f.write(';')
