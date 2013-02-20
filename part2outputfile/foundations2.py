@@ -1,9 +1,10 @@
 # coding: utf-8
 import json
+from pprint import pprint
 
-def parse_json(input_file):
+def parse_json(input_file, f):
 	for x in input_data["statement-list"]:
-		print x["operator"]
+		print (x["operator"])
 		for y in x["arguments"]:
 			print y
 
@@ -60,4 +61,4 @@ f.close
 
 print 'output to \'output.txt\' '
 
-parse_json(input_data)
+parse_json(input_data, f)
