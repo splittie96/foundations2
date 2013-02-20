@@ -1,12 +1,37 @@
 # coding: utf-8
 import json
-from pprint import pprint
+global variable_dict
+variable_dict={}
 
-def parse_json(input_file, f):
-	for x in input_data["statement-list"]:
-		print (x["operator"])
-		for y in x["arguments"]:
-			print y
+
+
+def deal_with_new_node(argument):
+    argv = argument["arguments"]
+    if argument["operator"] == "set":
+        newset = frozenset([])
+        for x in argv:
+            if isinstance(x, int):
+                newset = newset.union([x])
+            else:
+                if "variable" in x:
+                    newset = newset.union([x["variable"]])
+        return newset
+    return 0
+
+def parse_json(current):
+	if current["operator"]=="equal":
+            args = current["arguments"]
+            var = args[0]["variable"]
+            if isinstance(args[1], int):
+                variable_dict[var] = args[1]
+            else:
+                variable_dict[var] = deal_with_new_node(args[1])
+            
+
+
+
+
+
 
 def output(out):
     counter = 0
@@ -60,5 +85,8 @@ for current in x:
 f.close
 
 print 'output to \'output.txt\' '
+for x in input_data["statement-list"]:
+    parse_json(x)
 
-parse_json(input_data, f)
+for key in sorted(variable_dict.iterkeys()):
+    print "%s: %s" % (key, variable_dict[key])
