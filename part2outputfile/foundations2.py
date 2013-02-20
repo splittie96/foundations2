@@ -61,5 +61,6 @@ f.close
 
 print 'output to \'output.txt\' '
 
-for x in input_data[0]:
-	print x
+for x in input_data["statement-list"]:
+	print x["operator"]
+	print x["arguments"]
