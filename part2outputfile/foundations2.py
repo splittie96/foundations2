@@ -14,7 +14,7 @@ def deal_with_new_node(argument):
                 newset = newset.union([x])
             else:
                 if "variable" in x:
-                    newset = newset.union([x["variable"]])
+                    newset = newset.union([variable_dict[x["variable"]]])
         return newset
     return 0
 
