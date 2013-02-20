@@ -1,4 +1,5 @@
 # coding: utf-8
+import json
 
 def output(out):
     counter = 0
@@ -20,12 +21,12 @@ def output(out):
         else:
             if counter != 0:
                 f.write(',')
-            f.write(str(x))
+            f.write('%d' % x)
             counter = counter+1
 
 def write_out(to_write):
     if isinstance(to_write, int):
-        f.write(str(to_write))
+        f.write('%d' % to_write)
     elif isinstance(to_write, frozenset):
         f.write('{')
         output(to_write)
@@ -45,13 +46,20 @@ x.append(x[4].difference(frozenset([x[1]])))
 x.append(x[4].intersection(frozenset([x[1]])))
 
 f = open('output.txt', 'w')
+json_file = open('input.json', 'r')
+input_data = json.load(json_file)
+
 counter = 0
 for current in x:
     f.write('x')
-    f.write(str(counter))
+    f.write('%d' % counter)
     f.write(' = ')
     write_out(current)
     f.write(';\n')
     counter = counter + 1
-    
 f.close
+
+print 'output to \'output.txt\' '
+
+for x in input_data[0]:
+	print x
