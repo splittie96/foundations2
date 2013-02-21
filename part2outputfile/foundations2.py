@@ -40,7 +40,8 @@ def deal_with_new_node(argument):
 		comparisons.append(variable_dict[x["variable"]])
             counter = counter + 1
         if comparisons[0] == comparisons[1]:
-            return 1
+            if not isinstance(comparisons[1],int):
+                return 1
         
     elif argument["operator"] == "member":
 	comparisons = []
