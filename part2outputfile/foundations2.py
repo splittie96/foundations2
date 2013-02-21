@@ -1,9 +1,6 @@
 # coding: utf-8
 import json
-global variable_dict
 variable_dict={}
-
-
 
 def deal_with_new_node(argument):
     argv = argument["arguments"]
@@ -12,26 +9,35 @@ def deal_with_new_node(argument):
         for x in argv:
             if isinstance(x, int):
                 newset = newset.union([x])
-            else:
-                if "variable" in x:
-                    newset = newset.union([variable_dict[x["variable"]]])
+            elif "variable" in x:
+				newset = newset.union([variable_dict[x["variable"]]])
+            elif "operator" in x:
+				newset = newset.union(deal_with_new_node(x))
         return newset
+        
+    elif argument["operator"] == "tuple":
+		tuple_contents = []
+		for x in argv:
+			if isinstance(x, int):
+				tuple_contents.append(x)
+			elif "variable" in x:
+				tuple_contents.append(variable_dict[x["variable"]])
+			elif "operator" in x:
+				tuple_contents.append(deal_with_new_node(x))
+		return tuple(tuple_contents)
     return 0
 
 def parse_json(current):
 	if current["operator"]=="equal":
-            args = current["arguments"]
-            var = args[0]["variable"]
-            if isinstance(args[1], int):
-                variable_dict[var] = args[1]
+            argv = current["arguments"]
+            var = argv[0]["variable"]
+            if isinstance(argv[1], int):
+                variable_dict[var] = argv[1]
             else:
-                variable_dict[var] = deal_with_new_node(args[1])
-            
-
-
-
-
-
+				for counter in range(1, len(argv)):
+					variable_dict[var] = deal_with_new_node(argv[1])
+	print var + " =",				
+	print(variable_dict[var])
 
 def output(out):
     counter = 0
@@ -69,7 +75,6 @@ def write_out(to_write):
         f.write (')')
 
 x=[]
-
 f = open('output.txt', 'w')
 json_file = open('input.json', 'r')
 input_data = json.load(json_file)
@@ -87,6 +92,3 @@ f.close
 print 'output to \'output.txt\' '
 for x in input_data["statement-list"]:
     parse_json(x)
-
-for key in sorted(variable_dict.iterkeys()):
-    print "%s: %s" % (key, variable_dict[key])
