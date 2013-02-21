@@ -9,10 +9,10 @@ def deal_with_new_node(argument):
         for x in argv:
             if isinstance(x, int):
                 newset = newset.union([x])
-            elif "variable" in x:
-				newset = newset.union([variable_dict[x["variable"]]])
             elif "operator" in x:
 				newset = newset.union(deal_with_new_node(x))
+            elif "variable" in x:
+				newset = newset.union([variable_dict[x["variable"]]])
         return newset
         
     elif argument["operator"] == "tuple":
@@ -20,11 +20,13 @@ def deal_with_new_node(argument):
 		for x in argv:
 			if isinstance(x, int):
 				tuple_contents.append(x)
-			elif "variable" in x:
-				tuple_contents.append(variable_dict[x["variable"]])
 			elif "operator" in x:
 				tuple_contents.append(deal_with_new_node(x))
-		return tuple(tuple_contents)
+			elif "variable" in x:
+				tuple_contents.append(variable_dict[x["variable"]])
+		new_tuple = tuple(tuple_contents)
+		print new_tuple
+		return new_tuple
     return 0
 
 def parse_json(current):
@@ -36,8 +38,9 @@ def parse_json(current):
             else:
 				for counter in range(1, len(argv)):
 					variable_dict[var] = deal_with_new_node(argv[1])
-	print var + " =",				
-	print(variable_dict[var])
+	f.write (var + " = ")			
+	write_out(variable_dict[var])
+	f.write(';\n')
 
 def output(out):
     counter = 0
@@ -79,16 +82,8 @@ f = open('output.txt', 'w')
 json_file = open('input.json', 'r')
 input_data = json.load(json_file)
 
-"""counter = 0
-for current in x:
-    f.write('x')
-    f.write('%d' % counter)
-    f.write(' = ')
-    write_out(current)
-    f.write(';\n')
-    counter = counter + 1"""
-f.close
-
 print 'output to \'output.txt\' '
 for x in input_data["statement-list"]:
     parse_json(x)
+
+f.close
