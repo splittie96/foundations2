@@ -5,42 +5,70 @@ variable_dict={}
 def deal_with_new_node(argument):
     argv = argument["arguments"]
     if argument["operator"] == "set":
-        newset = frozenset([])
+        newset = set([])
         for x in argv:
             if isinstance(x, int):
-                newset = newset.union([x])
+                newset.add(x)
             elif "operator" in x:
-				newset = newset.union(deal_with_new_node(x))
+		newset.add(deal_with_new_node(x))
             elif "variable" in x:
-				newset = newset.union([variable_dict[x["variable"]]])
-        return newset
+		newset.add(variable_dict[x["variable"]])
+            new_frozenset = frozenset(newset)
+        return new_frozenset
         
     elif argument["operator"] == "tuple":
-		tuple_contents = []
-		for x in argv:
-			if isinstance(x, int):
-				tuple_contents.append(x)
-			elif "operator" in x:
-				tuple_contents.append(deal_with_new_node(x))
-			elif "variable" in x:
-				tuple_contents.append(variable_dict[x["variable"]])
-		new_tuple = tuple(tuple_contents)
-		print new_tuple
-		return new_tuple
+	tuple_contents = []
+	for x in argv:
+            if isinstance(x, int):
+		tuple_contents.append(x)
+            elif "operator" in x:
+		tuple_contents.append(deal_with_new_node(x))
+            elif "variable" in x:
+		tuple_contents.append(variable_dict[x["variable"]])
+	new_tuple = tuple(tuple_contents)
+	return new_tuple
+    
+    elif argument["operator"] == "equal":
+	comparisons = []
+        counter = 0
+	for x in argv:
+            if isinstance(x, int):
+		comparisons.append(x)
+            elif "operator" in x:
+		comparisons.append(deal_with_new_node(x))
+            elif "variable" in x:
+		comparisons.append(variable_dict[x["variable"]])
+            counter = counter + 1
+        if comparisons[0] == comparisons[1]:
+            return 1
+        
+    elif argument["operator"] == "member":
+	comparisons = []
+        counter = 0
+	for x in argv:
+            if isinstance(x, int):
+		comparisons.append(x)
+            elif "operator" in x:
+		comparisons.append(deal_with_new_node(x))
+            elif "variable" in x:
+		comparisons.append(variable_dict[x["variable"]])
+            counter = counter + 1
+        if comparisons[0] in comparisons[1]:
+            return 1
+    
     return 0
 
 def parse_json(current):
-	if current["operator"]=="equal":
-            argv = current["arguments"]
-            var = argv[0]["variable"]
-            if isinstance(argv[1], int):
-                variable_dict[var] = argv[1]
-            else:
-				for counter in range(1, len(argv)):
-					variable_dict[var] = deal_with_new_node(argv[1])
-	f.write (var + " = ")			
-	write_out(variable_dict[var])
-	f.write(';\n')
+    if current["operator"]=="equal":
+        argv = current["arguments"]
+        var = argv[0]["variable"]
+        if isinstance(argv[1], int):
+            variable_dict[var] = argv[1]
+        else:
+            variable_dict[var] = deal_with_new_node(argv[1])
+    f.write (var + " = ")			
+    write_out(variable_dict[var])
+    f.write(';\n')
 
 def output(out):
     counter = 0
