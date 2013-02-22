@@ -18,6 +18,7 @@ def deal_with_new_node(argument):
     #-if the arguments have to be placed in a set
     if argument["operator"] == "set":
         #if the arguments are to be placed in a set...
+        #create new empty list
         newset = set([])
         for x in argv:
             #for each element of the arguments list
@@ -38,12 +39,14 @@ def deal_with_new_node(argument):
                         #returning undefined to allow failed variables to be displayed
                         return "undefined"
                     else:
+                        #if the variable has been stored, add to list
                         newset.add(variable_dict[x["variable"]])
                 else:
                     print "variable undefined"
                     print x["variable"]
                     #returning undefined to allow failed variables to be displayed
                     return "undefined"
+        #create and return set from list of data
         new_frozenset = frozenset(newset)
         if "undefined" in new_frozenset:
             #returning undefined to allow failed variables to be displayed
@@ -55,38 +58,54 @@ def deal_with_new_node(argument):
 
         
     elif argument["operator"] == "tuple":
+    #tuple required - time for tuples
+    #create list for tuple creation
 	tuple_contents = []
+        #for each part of the argument
         for x in argv:
+            #if int add to list
             if isinstance(x, int):
 		        tuple_contents.append(x)
+            #if the argument has an operator, carry out operation by recursion
             elif "operator" in x:
                 if deal_with_new_node(x) == "undefined":
                     #returning undefined to allow failed variables to be displayed
                     return "undefined"
                 else:
                     tuple_contents.append(deal_with_new_node(x))
+            #if the arg is a vriable , find variable and and to list
             elif "variable" in x:
                 if x["variable"] in variable_dict:
                     if x["variable"] == "undefined":
                         #returning undefined to allow failed variables to be displayed
                         return "undefined"
+                    #if the variable has been stored, add to list
                     tuple_contents.append(variable_dict[x["variable"]])
                 else:
                     print "variable undefined"
                     print x["variable"]
                     #returning undefined to allow failed variables to be displayed
                     return "undefined"
+        #empty tuple
         new_tuple = ()
+        """========================="""
+        """===== FUN EXTENSION ====="""
+        """========================="""
+        #if tuple is too small return empty tuple and print error
         if len(tuple_contents)==1:
             print 'error at:'
             print argv
-            raise Exception ('Tuple cannot be of length 1!')
+            print('tuple cannot be of length 1')
+            return tuple(["tuple cannot be","of length one"])
         else:
             new_tuple = tuple(tuple_contents)
             return new_tuple
         #fallback result
         return 0
     
+    #if any arguments are found using the same methods as before
+    #they are added to the end of a list
+    #the arguments are compared and if equal 1 is returned
     elif argument["operator"] == "equal":
         comparisons = []
         for x in argv:
@@ -118,7 +137,9 @@ def deal_with_new_node(argument):
         #fallback result
         return 0
 
-        
+    #if any arguments are found using the same methods as before
+    #they are added to the end of a list
+    #the arguments are compared and first is in second 1 is returned   
     elif argument["operator"] == "member":
         comparisons = []
         for x in argv:
@@ -141,12 +162,15 @@ def deal_with_new_node(argument):
                     #returning undefined to allow failed variables to be displayed
                     return "undefined"
         if comparisons[0] in comparisons[1]:
+            #the integers cannot have any members - must fail
             if not isinstance(comparisons[1],int):
                 if comparisons [0] == "undefined" or comparisons[1] == "undefined":
                     #returning undefined to allow failed variables to be displayed
                     return "undefined"
                 else:
                     return 1
+            else:
+                return '0 - int cannot have members'
         #fallback result
         return 0
 
@@ -210,8 +234,16 @@ def output(out):
             f.write (')')
             counter = counter+1
 
-        #if x is an integer then simply print the integer
-        else:
+        #if x is a string then simply print the integer
+        elif isinstance(x,str):
+            #print comma if not in first position
+            if counter != 0:
+                f.write(',')
+            f.write(x)
+            counter = counter+1
+
+        #if int, print int
+        elif isinstance(x,int):
             #print comma if not in first position
             if counter != 0:
                 f.write(',')
