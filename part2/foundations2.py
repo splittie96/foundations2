@@ -27,6 +27,7 @@ def deal_with_new_node(argument):
             elif "operator" in x:
                 #if operator exists then recurse this function with x
                 if deal_with_new_node(x) == "undefined":
+                    #returning undefined to allow failed variables to be displayed
                     return "undefined"
                 else:
                     newset.add(deal_with_new_node(x))
@@ -34,18 +35,23 @@ def deal_with_new_node(argument):
                 #if variable required then get variable from parsed dict
                 if x["variable"] in variable_dict:
                     if x["variable"] == "undefined":
+                        #returning undefined to allow failed variables to be displayed
                         return "undefined"
                     else:
                         newset.add(variable_dict[x["variable"]])
                 else:
                     print "variable undefined"
                     print x["variable"]
+                    #returning undefined to allow failed variables to be displayed
                     return "undefined"
         new_frozenset = frozenset(newset)
         if "undefined" in new_frozenset:
+            #returning undefined to allow failed variables to be displayed
             return undefined
         else:
             return new_frozenset
+        #fallback result
+        return 0
 
         
     elif argument["operator"] == "tuple":
@@ -55,17 +61,20 @@ def deal_with_new_node(argument):
 		        tuple_contents.append(x)
             elif "operator" in x:
                 if deal_with_new_node(x) == "undefined":
+                    #returning undefined to allow failed variables to be displayed
                     return "undefined"
                 else:
                     tuple_contents.append(deal_with_new_node(x))
             elif "variable" in x:
                 if x["variable"] in variable_dict:
                     if x["variable"] == "undefined":
+                        #returning undefined to allow failed variables to be displayed
                         return "undefined"
                     tuple_contents.append(variable_dict[x["variable"]])
                 else:
                     print "variable undefined"
                     print x["variable"]
+                    #returning undefined to allow failed variables to be displayed
                     return "undefined"
         new_tuple = ()
         if len(tuple_contents)==1:
@@ -74,7 +83,9 @@ def deal_with_new_node(argument):
             raise Exception ('Tuple cannot be of length 1!')
         else:
             new_tuple = tuple(tuple_contents)
-        return new_tuple
+            return new_tuple
+        #fallback result
+        return 0
     
     elif argument["operator"] == "equal":
         comparisons = []
@@ -83,23 +94,28 @@ def deal_with_new_node(argument):
                 comparisons.append(x)
             elif "operator" in x:
                 if deal_with_new_node(x) == "undefined":
+                    #returning undefined to allow failed variables to be displayed
                     return "undefined"
                 else:
                     comparisons.append(deal_with_new_node(x))
             elif "variable" in x:
                 if x["variable"] in variable_dict:
                     if x["variable"] == "undefined":
+                        #returning undefined to allow failed variables to be displayed
                         return "undefined"
                     comparisons.append(variable_dict[x["variable"]])
                 else:
                     print "variable undefined"
                     print x["variable"]
+                    #returning undefined to allow failed variables to be displayed
                     return "undefined"
         if comparisons[0] == comparisons[1]:
             if comparisons [0] == "undefined" or comparisons[1] == "undefined":
+                #returning undefined to allow failed variables to be displayed
                 return "undefined"
             else:
                 return 1
+        #fallback result
         return 0
 
         
@@ -110,23 +126,28 @@ def deal_with_new_node(argument):
                 comparisons.append(x)
             elif "operator" in x:
                 if deal_with_new_node(x) == "undefined":
+                    #returning undefined to allow failed variables to be displayed
                     return "undefined"
                 comparisons.append(deal_with_new_node(x))
             elif "variable" in x:
                 if x["variable"] in variable_dict:
                     if x["variable"] == "undefined":
+                        #returning undefined to allow failed variables to be displayed
                         return "undefined"
                     comparisons.append(variable_dict[x["variable"]])
                 else:
                     print "variable undefined"
                     print x["variable"]
+                    #returning undefined to allow failed variables to be displayed
                     return "undefined"
         if comparisons[0] in comparisons[1]:
             if not isinstance(comparisons[1],int):
                 if comparisons [0] == "undefined" or comparisons[1] == "undefined":
+                    #returning undefined to allow failed variables to be displayed
                     return "undefined"
                 else:
                     return 1
+        #fallback result
         return 0
 
 
