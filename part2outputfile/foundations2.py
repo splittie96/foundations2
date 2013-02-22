@@ -1,7 +1,15 @@
+#CHARACTER ENCODING INFO
+#ALLOWS USE OF '#' WITHOUT ANGRY ERROR MESSAGES
 # coding: utf-8
+
+#IMPORT JSON LIBRARY
 import json
+#GLOBAL DICTIONARY OF ALL PARSED VARIABLES
 variable_dict={}
 
+"""===============================
+RECURSIVE PARSING OF OPERATORS
+==============================="""
 def deal_with_new_node(argument):
     argv = argument["arguments"]
     if argument["operator"] == "set":
@@ -59,6 +67,10 @@ def deal_with_new_node(argument):
     
     return 0
 
+
+"""===============================
+INITIALIZE PARSING OF JSON FILE
+==============================="""
 def parse_json(current):
     if current["operator"]=="equal":
         argv = current["arguments"]
@@ -71,6 +83,10 @@ def parse_json(current):
     write_out(variable_dict[var])
     f.write(';\n')
 
+
+"""====================================
+METHOD TO CARRY OUT RECURSIVE PRINTING
+===================================="""
 def output(out):
     counter = 0
     for x in out:
@@ -94,6 +110,10 @@ def output(out):
             f.write('%d' % x)
             counter = counter+1
 
+
+"""===============================
+METHOD TO INITIALIZE PRINTING
+==============================="""
 def write_out(to_write):
     if isinstance(to_write, int):
         f.write('%d' % to_write)
@@ -106,7 +126,10 @@ def write_out(to_write):
         output(to_write)
         f.write (')')
 
-x=[]
+
+"""===============================
+MAIN PROGRAM RUNS HERE
+==============================="""
 f = open('output.txt', 'w')
 json_file = open('input.json', 'r')
 input_data = json.load(json_file)
@@ -115,4 +138,5 @@ print 'output to \'output.txt\' '
 for x in input_data["statement-list"]:
     parse_json(x)
 
-f.close
+f.close()
+json_file.close()
