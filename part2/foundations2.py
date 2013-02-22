@@ -117,12 +117,15 @@ def output(out):
 METHOD TO INITIALIZE PRINTING
 ==============================="""
 def write_out(to_write):
+    # if current member is int, write to file
     if isinstance(to_write, int):
         f.write('%d' % to_write)
+    #if set, print relevant brackets then reccurse on contained set
     elif isinstance(to_write, frozenset):
         f.write('{')
         output(to_write)
         f.write('}')
+    #if tuple, print relevant brackets then recurse on contained tuple
     elif isinstance(to_write,tuple):
         f.write('(')
         output(to_write)
@@ -132,13 +135,20 @@ def write_out(to_write):
 """===============================
 MAIN PROGRAM RUNS HERE
 ==============================="""
+#open output.txt for writing evaluated expressions
 f = open('output.txt', 'w')
-json_file = open('input.json', 'r')
+#open json file for reading
+json_file = open('simple-input.json', 'r')
+#use imported json library to load json into dict input_data
 input_data = json.load(json_file)
 
+#inform user where output is going - just in case...
 print 'output to \'output.txt\' '
+#for every member of the list with key 'statement-list' in the loaded dict
 for x in input_data["statement-list"]:
+    #parse the current member of the list
     parse_json(x)
 
+#close opened files
 f.close()
 json_file.close()
