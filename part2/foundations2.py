@@ -1,3 +1,6 @@
+"""== Robbie Henderson - Foundations 2 Assignment Part 2 =="""
+"""========================================================"""
+
 #CHARACTER ENCODING INFO
 #ALLOWS USE OF '#' WITHOUT ANGRY ERROR MESSAGES
 # coding: utf-8
