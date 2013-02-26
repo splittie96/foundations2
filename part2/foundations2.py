@@ -194,6 +194,14 @@ def parse_json(current):
         #if the argument is an integer, assign value
         if isinstance(argv[1], int):
             variable_dict[var] = argv[1]
+        #incase of variable assignment to variable
+        elif "variable" in argv[1]:
+			#check if variable exists, assign if so
+			if argv[1]["variable"] in variable_dict:
+				variable_dict[var] = variable_dict[argv[1]["variable"]]
+			#otherwise assign undefined
+			else:
+				variable_dict[var] = "undefined"
         #otherwise, deal with more complex operators etc
         #in new node function
         else:
@@ -261,15 +269,18 @@ def write_out(to_write):
     # if current member is int, write to file
     if isinstance(to_write, int):
         f.write('%d' % to_write)
+        
     # if string etc undefined, print
     if isinstance(to_write, str):
         f.write(to_write)
+        
     #if set, print relevant brackets then reccurse on contained set
     elif isinstance(to_write, frozenset):
         f.write('{')
         #run output for set x
         output(to_write)
         f.write('}')
+        
     #if tuple, print relevant brackets then recurse on contained tuple
     elif isinstance(to_write,tuple):
         f.write('(')
@@ -286,20 +297,28 @@ def write_out(to_write):
 #inwards is basically the same....
 inwards = "input.json"
 outwards = "output.txt"
+
 #open output.txt for writing evaluated expressions
 f = open(outwards, 'w')
+
 #open json file for reading
 json_file = open(inwards, 'r')
-#use imported json library to load json into dict input_data
-input_data = json.load(json_file)
+
+#try to open json file
+#print bad output if failed
+try:
+	#use imported json library to load json into dict input_data
+	input_data = json.load(json_file)
+	#for every member of the list with key 'statement-list' in the loaded dict
+	for x in input_data["statement-list"]:
+		#parse the current member of the list
+		parse_json(x)
+except ValueError:
+	f.write("BAD INPUT")
 
 #inform user where output is going - just in case...
 print '\nloaded \''+inwards+'\' as input'
 print 'output to \''+outwards+'\' \n'
-#for every member of the list with key 'statement-list' in the loaded dict
-for x in input_data["statement-list"]:
-    #parse the current member of the list
-    parse_json(x)
 
 #close opened files
 f.close()
