@@ -1,6 +1,6 @@
 PYTHON := $(python)
 
-.DEFAULT_GOAL := part-2-run
+.DEFAULT_GOAL := part-3-run
 
-part-2-run:
+part-3-run:
 		python foundations2.py
