@@ -11,7 +11,36 @@ import json
 #GLOBAL DICTIONARY OF ALL PARSED VARIABLES
 variable_dict={}
 
+#*********************************
+#*********************************
+#*** START OF PART 3 FUNCTIONS ***
+#*********************************
+#*********************************
+
+#builds a set or tuple from json data 
+#to avoid repeated code in parser
+def build_argument(x):
+    if isinstance(x, int):
+        # if int, return int value
+        return x
+    #if x contains a reference to a variable...
+    elif "variable" in x:
+        #check if the variable has been parsed
+        #return it if it has
+        if x["variable"] in variable_dict:
+            return variable_dict[x["variable"]]
+        else:
+            #otherwise return undefined
+            return "undefined"
+    elif "operator" in x:
+        #if the data has an operator, then parse accordingly
+        return deal_with_new_node(x)
+
+#to test if the expression is a function
 def is_function(x):
+    #the following code essentailly builds the expression
+    #in an almost identiacal way to above
+    #but will not build an int, int cannot be function
     if "variable" in x:
         if x["variable"] in variable_dict:
             function_to_test = variable_dict[x["variable"]]
@@ -21,20 +50,29 @@ def is_function(x):
         function_to_test = deal_with_new_node(x)
     elif isinstance(x, int):
         return None
+    #test if expression is set
     if isinstance(function_to_test, frozenset):
+        #initialize test variables
         correct_tuple_count = 0
         already_seen = []
+        #for each element of the set function
         for current in function_to_test:
+            #if tuple and length 2 then add to already seen and count as correct
             if isinstance(current, tuple) and len(current) == 2 and not current[0] in already_seen:
                 correct_tuple_count = correct_tuple_count + 1
                 already_seen.append(current[0])
+            else:
+                return None
         if correct_tuple_count == len(function_to_test):
+            #if siccessfull return function
             return function_to_test
         else:
+            #otherwise return nothing
             return None
     else:
         return None
 
+#function to apply function
 def apply_function(function, right):
     if isinstance(right, int):
         argument = right
@@ -49,7 +87,7 @@ def apply_function(function, right):
     for x in function:
         if x[0] == argument:
             return x[1]
-    return "undefined"
+    return "undefined in function"
 
 def domain(function):
     domain_list = []
@@ -68,6 +106,44 @@ def function_inverse(function):
     for x in function:
         inverse_list.append(tuple([x[1], x[0]]))
     return frozenset(inverse_list)
+
+def set_union(setA, setB):
+    if isinstance(setA, frozenset) and isinstance(setB, frozenset):
+        return setA.union(setB)
+    else:
+        return "input not sets"
+
+def set_intersection(setA, setB):
+    if isinstance(setA, frozenset) and isinstance(setB, frozenset):
+        return setA.intersection(setB)
+    else:
+        return "input not sets"
+
+def set_difference(setA, setB):
+    if isinstance(setA, frozenset) and isinstance(setB, frozenset):
+        return setA.difference(setB)
+    else:
+        return "input not sets"
+
+def injective(function):
+    #create empty list for seen elements
+    already_seen = []
+    #for each element of set
+    for current in function:
+        #if output of element has been seen
+        if current[1] in already_seen:
+            #return 0 for false
+            return 0
+        else:
+            #add to list
+            already_seen.append(current[1])
+    return 1
+
+#*********************************
+#*********************************
+#**** END OF PART 3 FUNCTIONS ****
+#*********************************
+#*********************************
 
 """======================================"""
 """=== RECURSIVE PARSING OF OPERATORS ==="""
@@ -245,7 +321,11 @@ def deal_with_new_node(argument):
         #fallback result
         return 0
 
-
+#*********************************
+#*********************************
+#**** START OF PART 3 PARSING ****
+#*********************************
+#*********************************
     elif argument["operator"] == "is-function":
         success = is_function(argv[0])
         if not success == None:
@@ -276,13 +356,22 @@ def deal_with_new_node(argument):
             return "undefined"
 
     elif argument["operator"] == "intersection":
-        return "intersecton"
+        sets = argument["arguments"]
+        setA = build_argument(sets[0])
+        setB = build_argument(sets[1])
+        return set_intersection(setA, setB)
 
     elif argument["operator"] == "union":
-        return "union"
+        sets = argument["arguments"]
+        setA = build_argument(sets[0])
+        setB = build_argument(sets[1])
+        return set_union(setA, setB)
 
     elif argument["operator"] == "set-difference":
-        return "difference"
+        sets = argument["arguments"]
+        setA = build_argument(sets[0])
+        setB = build_argument(sets[1])
+        return set_difference(setA, setB)
 
     elif argument["operator"] == "inverse":
         funct = is_function(argv[0])
@@ -292,7 +381,17 @@ def deal_with_new_node(argument):
             return "undefined"
 
     elif argument["operator"] == "is-injective":
-        return "injective"
+        funct = is_function(argv[0])
+        if not funct == None:
+            return injective(funct)
+        else:
+            return "undefined"
+
+#*********************************
+#*********************************
+#***** END OF PART 3 PARSING *****
+#*********************************
+#*********************************
 
     else:
         return "not seen this operator before..."
@@ -419,7 +518,7 @@ inwards = "input.json"
 outwards = "output.txt"
 
 #open output.txt for writing evaluated expressions
-f = open(outwards, 'w')
+f = open(outwards, 'w+')
 
 #open json file for reading
 json_file = open(inwards, 'r')

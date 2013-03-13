@@ -1,0 +1,1 @@
+For part 3 I essentially used the same program as part 2, but added various functions to deal with new operators 
