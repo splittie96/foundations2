@@ -20,7 +20,7 @@ def is_function(x):
     elif "operator" in x:
         function_to_test = deal_with_new_node(x)
     elif isinstance(x, int):
-        return 0
+        return None
     if isinstance(function_to_test, frozenset):
         correct_tuple_count = 0
         already_seen = []
@@ -29,21 +29,13 @@ def is_function(x):
                 correct_tuple_count = correct_tuple_count + 1
                 already_seen.append(current[0])
         if correct_tuple_count == len(function_to_test):
-            return 1
+            return function_to_test
         else:
-            return 0
+            return None
     else:
-        return 0
+        return None
 
-def apply_function(left, right):
-    if "variable" in left:
-        if left["variable"] in variable_dict:
-            function = variable_dict[left["variable"]]
-        else:
-            return "undefined"
-    elif "operator" in left:
-        function = deal_with_new_node(left)
-
+def apply_function(function, right):
     if isinstance(right, int):
         argument = right
     elif "variable" in right:
@@ -59,6 +51,23 @@ def apply_function(left, right):
             return x[1]
     return "undefined"
 
+def domain(function):
+    domain_list = []
+    for x in function:
+        domain_list.append(x[0])
+    return frozenset(domain_list)
+
+def function_range(function):
+    domain_list = []
+    for x in function:
+        domain_list.append(x[1])
+    return frozenset(domain_list)
+
+def function_inverse(function):
+    inverse_list = []
+    for x in function:
+        inverse_list.append(tuple([x[1], x[0]]))
+    return frozenset(inverse_list)
 
 """======================================"""
 """=== RECURSIVE PARSING OF OPERATORS ==="""
@@ -238,14 +247,52 @@ def deal_with_new_node(argument):
 
 
     elif argument["operator"] == "is-function":
-        return is_function(argv[0])
+        success = is_function(argv[0])
+        if not success == None:
+            return 1
+        else:
+            return 0
 
 
     elif argument["operator"] == "apply-function":
-        if is_function(argv[0]) == 1:
-            return apply_function(argv[0], argv[1])
+        funct = is_function(argv[0])
+        if not funct == None:
+            return apply_function(funct, argv[1])
         else:
             return "undefined"
+
+    elif argument["operator"] == "domain":
+        funct = is_function(argv[0])
+        if not funct == None:
+            return domain(funct)
+        else:
+            return "undefined"
+
+    elif argument["operator"] == "range":
+        funct = is_function(argv[0])
+        if not funct == None:
+            return function_range(funct)
+        else:
+            return "undefined"
+
+    elif argument["operator"] == "intersection":
+        return "intersecton"
+
+    elif argument["operator"] == "union":
+        return "union"
+
+    elif argument["operator"] == "set-difference":
+        return "difference"
+
+    elif argument["operator"] == "inverse":
+        funct = is_function(argv[0])
+        if not funct == None:
+            return function_inverse(funct)
+        else:
+            return "undefined"
+
+    elif argument["operator"] == "is-injective":
+        return "injective"
 
     else:
         return "not seen this operator before..."
