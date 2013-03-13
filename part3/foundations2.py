@@ -1,3 +1,4 @@
+"""========================================================"""
 """== Robbie Henderson - Foundations 2 Assignment Part 2 =="""
 """========================================================"""
 
@@ -10,6 +11,55 @@ import json
 #GLOBAL DICTIONARY OF ALL PARSED VARIABLES
 variable_dict={}
 
+def is_function(x):
+    if "variable" in x:
+        if x["variable"] in variable_dict:
+            function_to_test = variable_dict[x["variable"]]
+        else:
+            return "undefined"
+    elif "operator" in x:
+        function_to_test = deal_with_new_node(x)
+    elif isinstance(x, int):
+        return 0
+    if isinstance(function_to_test, frozenset):
+        correct_tuple_count = 0
+        already_seen = []
+        for current in function_to_test:
+            if isinstance(current, tuple) and len(current) == 2 and not current[0] in already_seen:
+                correct_tuple_count = correct_tuple_count + 1
+                already_seen.append(current[0])
+        if correct_tuple_count == len(function_to_test):
+            return 1
+        else:
+            return 0
+    else:
+        return 0
+
+def apply_function(left, right):
+    if "variable" in left:
+        if left["variable"] in variable_dict:
+            function = variable_dict[left["variable"]]
+        else:
+            return "undefined"
+    elif "operator" in left:
+        function = deal_with_new_node(left)
+
+    if isinstance(right, int):
+        argument = right
+    elif "variable" in right:
+        if right["variable"] in variable_dict:
+            argument = variable_dict[right["variable"]]
+        else:
+            return "undefined"
+    elif "operator" in right:
+        argument = deal_with_new_node(right)
+
+    for x in function:
+        if x[0] == argument:
+            return x[1]
+    return "undefined"
+
+
 """======================================"""
 """=== RECURSIVE PARSING OF OPERATORS ==="""
 """====== WHERE THE MAGIC HAPPENS ======="""
@@ -20,6 +70,9 @@ def deal_with_new_node(argument):
     #checks operastor
     #-if the arguments have to be placed in a set
     if argument["operator"] == "set":
+        """========================="""
+        """========== SET =========="""
+        """========================="""
         #if the arguments are to be placed in a set...
         #create new empty list
         newset = set([])
@@ -59,11 +112,13 @@ def deal_with_new_node(argument):
         #fallback result
         return 0
 
-        
     elif argument["operator"] == "tuple":
-    #tuple required - time for tuples
-    #create list for tuple creation
-	tuple_contents = []
+        """========================="""
+        """========= TUPLE ========="""
+        """========================="""
+        #tuple required - time for tuples
+        #create list for tuple creation
+        tuple_contents = []
         #for each part of the argument
         for x in argv:
             #if int add to list
@@ -82,19 +137,17 @@ def deal_with_new_node(argument):
                     if x["variable"] == "undefined":
                         #returning undefined to allow failed variables to be displayed
                         return "undefined"
-                    #if the variable has been stored, add to list
-                    tuple_contents.append(variable_dict[x["variable"]])
+                    else:
+                        tuple_contents.append(variable_dict[x["variable"]])
                 else:
                     print "variable undefined"
                     print x["variable"]
                     #returning undefined to allow failed variables to be displayed
                     return "undefined"
-        #empty tuple
-        new_tuple = ()
         """========================="""
         """===== FUN EXTENSION ====="""
         """========================="""
-        #if tuple is too small return empty tuple and print error
+        #if tuple is too small return error tuple and print error
         if len(tuple_contents)==1:
             print 'error at:'
             print argv
@@ -110,6 +163,9 @@ def deal_with_new_node(argument):
     #they are added to the end of a list
     #the arguments are compared and if equal 1 is returned
     elif argument["operator"] == "equal":
+        """========================="""
+        """======== EQUALITY ======="""
+        """========================="""
         comparisons = []
         for x in argv:
             if isinstance(x, int):
@@ -144,6 +200,9 @@ def deal_with_new_node(argument):
     #they are added to the end of a list
     #the arguments are compared and first is in second 1 is returned   
     elif argument["operator"] == "member":
+        """========================="""
+        """========= MEMBER ========"""
+        """========================="""
         comparisons = []
         for x in argv:
             if isinstance(x, int):
@@ -178,12 +237,26 @@ def deal_with_new_node(argument):
         return 0
 
 
+    elif argument["operator"] == "is-function":
+        return is_function(argv[0])
+
+
+    elif argument["operator"] == "apply-function":
+        if is_function(argv[0]) == 1:
+            return apply_function(argv[0], argv[1])
+        else:
+            return "undefined"
+
+    else:
+        return "not seen this operator before..."
+
+
 """===============================
 INITIALIZE PARSING OF JSON FILE
 ==============================="""
 #having 2 seperate parsing functions allows the program
 #to ignore the first equals which is always assigning 
-#a valiue to variable, rather than equivalence
+#a value to variable, rather than equivalence
 def parse_json(current):
     #if current operator is equal
     #parse the expression
