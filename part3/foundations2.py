@@ -1,5 +1,5 @@
 """========================================================"""
-"""== Robbie Henderson - Foundations 2 Assignment Part 2 =="""
+"""== Robbie Henderson - Foundations 2 Assignment Part 3 =="""
 """========================================================"""
 
 #CHARACTER ENCODING INFO
@@ -36,6 +36,7 @@ def build_argument(x):
         #if the data has an operator, then parse accordingly
         return deal_with_new_node(x)
 
+
 #to test if the expression is a function
 def is_function(x):
     #the following code essentailly builds the expression
@@ -64,7 +65,7 @@ def is_function(x):
             else:
                 return None
         if correct_tuple_count == len(function_to_test):
-            #if siccessfull return function
+            #if successfull return function
             return function_to_test
         else:
             #otherwise return nothing
@@ -72,59 +73,65 @@ def is_function(x):
     else:
         return None
 
+
 #function to apply function
 def apply_function(function, right):
-    if isinstance(right, int):
-        argument = right
-    elif "variable" in right:
-        if right["variable"] in variable_dict:
-            argument = variable_dict[right["variable"]]
-        else:
-            return "undefined"
-    elif "operator" in right:
-        argument = deal_with_new_node(right)
+    argument = build_argument(right) #builds the argument to the function
+    for x in function: #for each tuple in the function
+        if x[0] == argument: #if the argument is on the left
+            return x[1] #return the right
+    return "undefined in function" #if not found return undefined message
 
-    for x in function:
-        if x[0] == argument:
-            return x[1]
-    return "undefined in function"
 
+#return the set of the domain of the function
 def domain(function):
-    domain_list = []
-    for x in function:
-        domain_list.append(x[0])
-    return frozenset(domain_list)
+    domain_list = [] #empty domain list
+    for x in function: #for each tuple in function
+        domain_list.append(x[0]) #add to end of domain list, the left of the tuple
+    return frozenset(domain_list) # return set of the domain list
 
+
+#return the set of the range of the function
 def function_range(function):
-    domain_list = []
-    for x in function:
-        domain_list.append(x[1])
-    return frozenset(domain_list)
+    range_list = [] #list of range elements
+    for x in function: # for each in the function
+        range_list.append(x[1]) #add end of tuple to list
+    return frozenset(range_list) #return set of range list
 
+
+#inverts each tuple in the function
 def function_inverse(function):
-    inverse_list = []
+    inverse_list = [] #inverted tuple list
     for x in function:
-        inverse_list.append(tuple([x[1], x[0]]))
+        inverse_list.append(tuple([x[1], x[0]])) #add a new tuple of the original backwards to the tuple list
     return frozenset(inverse_list)
 
+
+#set union method
 def set_union(setA, setB):
-    if isinstance(setA, frozenset) and isinstance(setB, frozenset):
-        return setA.union(setB)
-    else:
+    if isinstance(setA, frozenset) and isinstance(setB, frozenset): #if both arguments are sets
+        return setA.union(setB) #return the union of arguments
+    else: # otherwise return input not sets
         return "input not sets"
 
+
+#set intersection method
 def set_intersection(setA, setB):
-    if isinstance(setA, frozenset) and isinstance(setB, frozenset):
-        return setA.intersection(setB)
-    else:
+    if isinstance(setA, frozenset) and isinstance(setB, frozenset): #if both arguments are sets
+        return setA.intersection(setB) #return the intersection of arguments
+    else: # otherwise return input not sets
         return "input not sets"
 
+
+#set difference method
 def set_difference(setA, setB):
-    if isinstance(setA, frozenset) and isinstance(setB, frozenset):
-        return setA.difference(setB)
-    else:
+    if isinstance(setA, frozenset) and isinstance(setB, frozenset): #if both arguments are sets
+        return setA.difference(setB) #return the difference of arguments
+    else: # otherwise return input not sets
         return "input not sets"
 
+
+#test if function is injective
 def injective(function):
     #create empty list for seen elements
     already_seen = []
@@ -326,73 +333,80 @@ def deal_with_new_node(argument):
 #**** START OF PART 3 PARSING ****
 #*********************************
 #*********************************
+	#calculate is-function
     elif argument["operator"] == "is-function":
-        success = is_function(argv[0])
-        if not success == None:
-            return 1
-        else:
-            return 0
+        success = is_function(argv[0]) #run is function
+        if not success == None: #if a function is returned then the input is a function
+            return 1 #return 1
+        else: #otherwise failed
+            return 0 #return 0 or false
 
-
+	#calculate apply-function
     elif argument["operator"] == "apply-function":
-        funct = is_function(argv[0])
-        if not funct == None:
-            return apply_function(funct, argv[1])
+        funct = is_function(argv[0]) #run is function to ensure a function is being applied to and get the built function to work on
+        if not funct == None: #run if input is function
+            return apply_function(funct, argv[1]) #apply function on the returned fuinction with the second argument
         else:
-            return "undefined"
+            return "undefined" #if not a function then return undefined
 
+	#calculate domain of function
     elif argument["operator"] == "domain":
-        funct = is_function(argv[0])
-        if not funct == None:
-            return domain(funct)
+        funct = is_function(argv[0]) #run is function to ensure a function is being applied to and get the built function to work on
+        if not funct == None: #run if input is function
+            return domain(funct) #return the result of the domain method applied to the function
         else:
-            return "undefined"
+            return "undefined" #if not a function then return undefined
 
+	#calculate range of function
     elif argument["operator"] == "range":
-        funct = is_function(argv[0])
-        if not funct == None:
-            return function_range(funct)
+        funct = is_function(argv[0]) #run is function to ensure a function is being applied to and get the built function to work on
+        if not funct == None: #run if input is function
+            return function_range(funct) #return the result of the range method applied to the function
         else:
-            return "undefined"
+            return "undefined" #if not a function then return undefined
 
+	#calculate intersection of 2 sets
     elif argument["operator"] == "intersection":
         sets = argument["arguments"]
-        setA = build_argument(sets[0])
-        setB = build_argument(sets[1])
-        return set_intersection(setA, setB)
+        setA = build_argument(sets[0]) #build the set from first argument
+        setB = build_argument(sets[1]) #build the set from second argument
+        return set_intersection(setA, setB) #return the difference of the 2 sets
 
+	#calculate union of 2 sets
     elif argument["operator"] == "union":
         sets = argument["arguments"]
-        setA = build_argument(sets[0])
-        setB = build_argument(sets[1])
-        return set_union(setA, setB)
+        setA = build_argument(sets[0]) #build the set from first argument
+        setB = build_argument(sets[1]) #build the set from second argument
+        return set_union(setA, setB) #return the difference of the 2 sets
 
+	#calculate difference of 2 sets
     elif argument["operator"] == "set-difference":
         sets = argument["arguments"]
-        setA = build_argument(sets[0])
-        setB = build_argument(sets[1])
-        return set_difference(setA, setB)
+        setA = build_argument(sets[0]) #build the set from first argument
+        setB = build_argument(sets[1]) #build the set from second argument
+        return set_difference(setA, setB) #return the difference of the 2 sets
 
+	#calculate inverse of a function
     elif argument["operator"] == "inverse":
-        funct = is_function(argv[0])
-        if not funct == None:
-            return function_inverse(funct)
+        funct = is_function(argv[0]) #run is function to ensure a function is being applied to and get the built function to work on
+        if not funct == None: #run if input is function
+            return function_inverse(funct) #return the inverse of the input function
         else:
-            return "undefined"
-
+            return "undefined" #if not a function then return undefined
+            
+	#calculate if a function is injective
     elif argument["operator"] == "is-injective":
-        funct = is_function(argv[0])
-        if not funct == None:
-            return injective(funct)
+        funct = is_function(argv[0]) #run is function to ensure a function is being applied to and get the built function to work on
+        if not funct == None: #run if input is function
+            return injective(funct) #return 1 if the function is injective, 0 otherwise
         else:
-            return "undefined"
+            return "undefined" #if not a function then return undefined
 
 #*********************************
 #*********************************
 #***** END OF PART 3 PARSING *****
 #*********************************
 #*********************************
-
     else:
         return "not seen this operator before..."
 

@@ -1,1 +1,29 @@
+Robbie Henderson - H00011358
+Foundations 2 - part 3
+
 For part 3 I essentially used the same program as part 2, but added various functions to deal with new operators 
+
+
+-----added functions-----
+
+build_argument - this builds the argument to a set/tuple/existing variable to avoid repeating code
+
+is_function - builds function and then tests if is function or not
+
+apply_function - applies the second argument given to the function in the first
+
+domain - return the set of the domain of the input function
+
+fuction_range - return the set of the range of the input function - named because range is already a python constant
+
+function_inverse - return the inverse of the input function
+
+set_intersection - return the intersection of 2 input sets
+
+set_union - return the union of 2 input sets
+
+set_difference - return the difference of 2 input set
+
+injective - return 1 if the function is injective, 0 if not, undefined if not function
+
+I also added lines to my recursive parser to deal with new json operators and call the respective functions mention above
