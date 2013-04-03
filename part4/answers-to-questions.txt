@@ -1,0 +1,30 @@
+The report on the actual code for this part is contained within the code
+itself at the very top of 'foundations2.py' in comments
+
+
+Q1:- Under what conditions does @diagonalize(E1,E2,E3) return a function F such that F does not belong to the value of E1? 
+Please be sure to exhaustively list all needed conditions. Please avoid listing unnecessary or redundant conditions. 
+Although your implementation will only work for inputs that are finite, consider the case where the inputs can be or can contain 
+infinite sets. Please explain your reasoning.
+
+A1:- If for i (a member of the domain of E1), E1(i)(i) is undefined, then for
+the new function F, F(i) would return E3, which may not be a member of E1.
+Also if E1(i)(i) is defined and E2(E1(i)(i)) is defined, then then F(i) would
+return E2(E1(i)(i)) which may not be in E1
+
+If the inputs were infinite sets then the above conditions may not apply as
+with infinite E1 for all values of i,  V1(i)(i) may be defined.  
+
+
+Q2:- Why is this the same as the method of “diagonalization” introduced by Cantor? Is it only the same under some conditions? 
+If so, what conditions?
+
+A2:- Cantor's diagonalization requires that for values of the new function F, F(i) must be
+different from the value of E1(i)(i), the diagonal elements, (using E1 referencing first input to
+function, from previous question) for all i in the domain of E1.
+
+Thus, for the conditions in the previous answer, that second input
+E2(E1(i)(i)) not equal to E1(i)(i) then the function created for part 4 is the
+same as digonalisation.  Technically if E1(i)(i) was undefined in this part,
+then this would also be the same as diagonaliisation as when E1(i)(i) is
+indefined it is different from E3.
